@@ -26,6 +26,7 @@ export default async function DashboardPage() {
 
   if (entriesError) {
     console.error("Error fetching entries:", entriesError)
+    console.error("Error details:", JSON.stringify(entriesError, null, 2))
   }
 
   return (

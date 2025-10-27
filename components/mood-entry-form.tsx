@@ -36,15 +36,31 @@ export function MoodEntryForm() {
     setError(null)
 
     try {
+      const { data: { user }, error: authError } = await supabase.auth.getUser()
+      console.log('Current user:', user)
+      console.log('Auth error:', authError)
+
       const mood = MOODS.find((m) => m.level === selectedMood)!
+      console.log('Inserting mood entry with data:', {
+        mood_level: selectedMood,
+        mood_emoji: mood.emoji,
+        mood_color: mood.color,
+        notes: notes || null,
+        user_id: user?.id
+      })
+
       const { error: insertError } = await supabase.from("mood_entries").insert({
         mood_level: selectedMood,
         mood_emoji: mood.emoji,
         mood_color: mood.color,
         notes: notes || null,
+        user_id: user?.id,
       })
 
-      if (insertError) throw insertError
+      if (insertError) {
+        console.error('Insert error:', insertError)
+        throw insertError
+      }
 
       setSelectedMood(null)
       setNotes("")

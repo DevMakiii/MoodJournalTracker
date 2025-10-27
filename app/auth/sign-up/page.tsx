@@ -32,16 +32,21 @@ export default function SignUpPage() {
     }
 
     try {
-      const { error } = await supabase.auth.signUp({
+      console.log("Attempting sign up with email:", email)
+      console.log("Redirect URL:", process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL || `${window.location.origin}/dashboard`)
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           emailRedirectTo: process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL || `${window.location.origin}/dashboard`,
         },
       })
+      console.log("Sign up response data:", data)
+      console.log("Sign up response error:", error)
       if (error) throw error
       router.push("/auth/sign-up-success")
     } catch (error: unknown) {
+      console.error("Sign up error:", error)
       setError(error instanceof Error ? error.message : "An error occurred")
     } finally {
       setIsLoading(false)
@@ -82,7 +87,7 @@ export default function SignUpPage() {
                     />
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="repeat-password">Repeat Password</Label>
+                    <Label htmlFor="repeat-password">Confirm Password</Label>
                     <Input
                       id="repeat-password"
                       type="password"
