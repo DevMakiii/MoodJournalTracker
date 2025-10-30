@@ -1,6 +1,12 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
+/* Test CSS to verify loading */
+.test-css {
+  color: red !important;
+  font-weight: bold !important;
+}
+
 :root {
   --background: oklch(0.98 0.02 240);
   --foreground: oklch(0.2 0.01 240);

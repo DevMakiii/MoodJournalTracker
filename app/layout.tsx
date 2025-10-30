@@ -18,6 +18,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  console.log('Layout rendering, CSS should be loaded');
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`font-sans antialiased`}>
