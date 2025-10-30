@@ -70,11 +70,11 @@ export default async function DashboardPage() {
   return (
     <div className="flex min-h-screen bg-background animate-fade-in">
       <Sidebar currentPage="/dashboard" />
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col md:ml-0">
         <MoodHeader latestMood={entries?.[0]} streakCount={streakCount} profile={profile} />
-        <main className="flex-1 px-4 sm:px-6 lg:px-8 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 space-y-6">
+        <main className="flex-1 px-4 sm:px-6 lg:px-8 py-4 md:py-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+            <div className="md:col-span-2 lg:col-span-2 space-y-4 md:space-y-6">
               <div className="animate-slide-up">
                 <LoadingWrapper fallback={<MoodEntrySkeleton />}>
                   <MoodEntryForm />
@@ -86,7 +86,7 @@ export default async function DashboardPage() {
                 </LoadingWrapper>
               </div>
             </div>
-            <div className="space-y-6">
+            <div className="space-y-4 md:space-y-6">
               <div className="animate-slide-up" style={{ animationDelay: "0.4s" }}>
                 <LoadingWrapper fallback={<CalendarSkeleton />}>
                   <MoodCalendar entries={entries || []} />

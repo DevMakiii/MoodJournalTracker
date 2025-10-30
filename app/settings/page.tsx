@@ -1,14 +1,9 @@
 import { createClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
-import { RemindersSettings } from "@/components/reminders-settings"
-import { AchievementsDisplay } from "@/components/achievements-display"
-import { ExportData } from "@/components/export-data"
-import { NotificationReminder } from "@/components/notification-reminder"
-import { ProfileSettings } from "@/components/profile-settings"
 import { Sidebar } from "@/components/sidebar"
 import { MoodHeader } from "@/components/mood-header"
 import { calculateMoodStreak } from "@/lib/utils"
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
+import { SettingsTabs } from "@/components/settings-tabs"
 
 export default async function SettingsPage() {
   const supabase = await createClient()
@@ -33,25 +28,10 @@ export default async function SettingsPage() {
   return (
     <div className="flex min-h-screen bg-background animate-fade-in">
       <Sidebar currentPage="/settings" />
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col md:ml-0">
         <MoodHeader latestMood={entries?.[0]} streakCount={streakCount} profile={profile} />
-        <main className="flex-1 px-4 sm:px-6 lg:px-8 py-8">
-          <Tabs defaultValue="profile" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="profile">Profile</TabsTrigger>
-              <TabsTrigger value="reminders">Daily Reminders</TabsTrigger>
-              <TabsTrigger value="notifications">Browser Notifications</TabsTrigger>
-            </TabsList>
-            <TabsContent value="profile" className="space-y-6 mt-6">
-              <ProfileSettings profile={profile} />
-            </TabsContent>
-            <TabsContent value="reminders" className="space-y-6 mt-6">
-              <RemindersSettings reminders={reminders || []} />
-            </TabsContent>
-            <TabsContent value="notifications" className="space-y-6 mt-6">
-              <NotificationReminder reminders={reminders || []} />
-            </TabsContent>
-          </Tabs>
+        <main className="flex-1 px-4 sm:px-6 lg:px-8 py-4 md:py-8">
+          <SettingsTabs profile={profile} reminders={reminders || []} />
         </main>
       </div>
     </div>

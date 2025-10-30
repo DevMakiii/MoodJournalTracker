@@ -40,7 +40,7 @@ export default async function AssistantPage() {
   return (
     <div className="flex min-h-screen bg-background animate-fade-in">
       <Sidebar currentPage="/assistant" />
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col md:ml-0">
         <MoodHeader latestMood={latestEntry} streakCount={streakCount} profile={profile} />
         <main className="flex-1 px-4 sm:px-6 lg:px-8 py-4">
           <AIAssistant userMoodContext={moodContext} />

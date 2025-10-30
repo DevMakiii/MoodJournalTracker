@@ -64,30 +64,28 @@ export function MoodHeader({ latestMood, streakCount = 0, profile }: MoodHeaderP
 
   return (
     <header className="bg-card/50 backdrop-blur-sm border-b px-4 py-3 flex items-center justify-between sticky top-0 z-40">
-      <div className="flex items-center gap-4">
-        <div>
-          <h1 className="text-lg font-semibold font-serif">{getGreeting()}!</h1>
-          <p className="text-sm text-muted-foreground italic">{quote}</p>
+      {latestMood && (
+        <div className={`px-2 md:px-3 py-1 rounded-full border text-xs md:text-sm flex-shrink-0 hidden md:flex ${getMoodColor(latestMood.mood_level)}`}>
+          <span className="text-base md:text-lg mr-1 md:mr-2">{latestMood.mood_emoji}</span>
+          <span className="font-medium">Level {latestMood.mood_level}</span>
         </div>
+      )}
 
-        {latestMood && (
-          <div className={`px-3 py-1 rounded-full border ${getMoodColor(latestMood.mood_level)}`}>
-            <span className="text-lg mr-2">{latestMood.mood_emoji}</span>
-            <span className="text-sm font-medium">Level {latestMood.mood_level}</span>
-          </div>
-        )}
+      <div className="flex-1 text-center min-w-0 md:text-left md:flex-1">
+        <h1 className="text-base md:text-lg font-semibold font-serif truncate hidden md:block">{getGreeting()}!</h1>
+        <p className="text-xs md:text-sm text-muted-foreground italic block">{quote}</p>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 md:gap-3 flex-shrink-0">
         {profile && (
-          <div className="flex items-center gap-3">
-            <div className="text-right">
-              <h2 className="text-sm font-medium">
+          <div className="flex items-center gap-2 md:gap-3">
+            <div className="text-right hidden sm:block">
+              <h2 className="text-xs md:text-sm font-medium">
                 {profile.first_name} {profile.last_name}
               </h2>
               <p className="text-xs text-muted-foreground">Welcome back</p>
             </div>
-            <Avatar className="size-10">
+            <Avatar className="size-8 md:size-10">
               <AvatarImage
                 src={profile.avatar_url || undefined}
                 alt={`${profile.first_name} ${profile.last_name}`}
@@ -97,7 +95,7 @@ export function MoodHeader({ latestMood, streakCount = 0, profile }: MoodHeaderP
                   (e.target as HTMLImageElement).style.display = 'none';
                 }}
               />
-              <AvatarFallback>
+              <AvatarFallback className="text-xs md:text-sm">
                 {profile.first_name?.[0]}{profile.last_name?.[0]}
               </AvatarFallback>
             </Avatar>
@@ -105,7 +103,7 @@ export function MoodHeader({ latestMood, streakCount = 0, profile }: MoodHeaderP
         )}
 
         {streakCount > 0 && (
-          <Badge variant="secondary" className="gap-1">
+          <Badge variant="secondary" className="gap-1 text-xs md:text-sm">
             🔥 {streakCount} day streak
           </Badge>
         )}

@@ -88,19 +88,19 @@ export function MoodEntryForm() {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-3">
             <label className="text-sm font-medium text-center block">Select your mood</label>
-            <div className="flex justify-center gap-3">
+            <div className="flex justify-center gap-2 md:gap-3 flex-wrap">
               {MOODS.map((mood) => (
                 <button
                   key={mood.level}
                   type="button"
                   onClick={() => setSelectedMood(mood.level)}
-                  className={`flex flex-col items-center gap-1 p-4 rounded-xl transition-all duration-300 hover:scale-105 ${
+                  className={`flex flex-col items-center gap-1 p-3 md:p-4 rounded-xl transition-all duration-300 hover:scale-105 ${
                     selectedMood === mood.level
                       ? `ring-2 ring-offset-2 ring-primary bg-accent/50 shadow-lg animate-gentle-bounce ${mood.animation}`
                       : "hover:bg-accent/30"
                   }`}
                 >
-                  <span className="text-4xl animate-fade-in" style={{ animationDelay: `${mood.level * 0.1}s` }}>{mood.emoji}</span>
+                  <span className="text-3xl md:text-4xl animate-fade-in" style={{ animationDelay: `${mood.level * 0.1}s` }}>{mood.emoji}</span>
                   <span className="text-xs text-muted-foreground font-light">{mood.label}</span>
                 </button>
               ))}

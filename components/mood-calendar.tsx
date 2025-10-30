@@ -55,10 +55,10 @@ export function MoodCalendar({ entries }: MoodCalendarProps) {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          <div className="grid grid-cols-7 gap-2">
+          <div className="grid grid-cols-7 gap-1 md:gap-2">
             {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-              <div key={day} className="text-center text-xs font-light text-muted-foreground py-2">
-                {day}
+              <div key={day} className="text-center text-xs font-light text-muted-foreground py-1 md:py-2">
+                {day.slice(0, 3)}
               </div>
             ))}
             {days.map((day, index) => {
@@ -68,7 +68,7 @@ export function MoodCalendar({ entries }: MoodCalendarProps) {
               return (
                 <div
                   key={index}
-                  className={`aspect-square flex items-center justify-center rounded-xl text-sm font-light transition-all duration-300 ${
+                  className={`aspect-square flex items-center justify-center rounded-lg md:rounded-xl text-xs md:text-sm font-light transition-all duration-300 ${
                     day
                       ? entry
                         ? "bg-accent/50 cursor-pointer hover:bg-accent/70 hover:scale-105 shadow-sm"
@@ -78,7 +78,7 @@ export function MoodCalendar({ entries }: MoodCalendarProps) {
                   style={{ animationDelay: `${index * 0.02}s` }}
                 >
                   {entry ? (
-                    <span className="text-xl animate-fade-in">{entry.mood_emoji}</span>
+                    <span className="text-lg md:text-xl animate-fade-in">{entry.mood_emoji}</span>
                   ) : day ? (
                     <span className="text-muted-foreground">{day}</span>
                   ) : null}

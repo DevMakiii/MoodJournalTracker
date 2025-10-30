@@ -48,7 +48,7 @@ export default function SignUpPage() {
         password,
         options: {
           data: userMetadata,
-          emailRedirectTo: `${window.location.origin}/dashboard`,
+          emailRedirectTo: `https://serenote-six.vercel.app/dashboard`,
         },
       })
       console.log("Sign up response data:", data)

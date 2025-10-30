@@ -41,9 +41,9 @@ export default async function EntriesPage() {
   return (
     <div className="flex min-h-screen bg-background animate-fade-in">
       <Sidebar currentPage="/entries" />
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col md:ml-0">
         <MoodHeader latestMood={entries?.[0]} streakCount={streakCount} profile={profile} />
-        <main className="flex-1 px-4 sm:px-6 lg:px-8 py-8">
+        <main className="flex-1 px-4 sm:px-6 lg:px-8 py-4 md:py-8">
           <div className="animate-slide-up">
             <LoadingWrapper fallback={<MoodHistorySkeleton />}>
               <MoodHistory entries={entries || []} />
