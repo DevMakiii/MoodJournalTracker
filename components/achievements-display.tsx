@@ -1,6 +1,7 @@
 "use client"
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Sprout, Flame, Crown, Dumbbell, Trophy, Sun } from "lucide-react"
 
 interface Achievement {
   id: string
@@ -18,32 +19,32 @@ const ACHIEVEMENT_DEFINITIONS = {
   first_entry: {
     title: "First Step",
     description: "Logged your first mood entry",
-    emoji: "🌱",
+    icon: Sprout,
   },
   week_streak: {
     title: "Week Warrior",
     description: "Logged mood for 7 consecutive days",
-    emoji: "🔥",
+    icon: Flame,
   },
   month_streak: {
     title: "Monthly Master",
     description: "Logged mood for 30 consecutive days",
-    emoji: "👑",
+    icon: Crown,
   },
   fifty_entries: {
     title: "Fifty Strong",
     description: "Logged 50 mood entries",
-    emoji: "💪",
+    icon: Dumbbell,
   },
   hundred_entries: {
     title: "Century Club",
     description: "Logged 100 mood entries",
-    emoji: "🏆",
+    icon: Trophy,
   },
   positive_week: {
     title: "Sunshine Week",
     description: "Average mood above 4 for a week",
-    emoji: "☀️",
+    icon: Sun,
   },
 }
 
@@ -71,7 +72,7 @@ export function AchievementsDisplay({ achievements }: AchievementsDisplayProps) 
                   isUnlocked ? "bg-yellow-50 border-2 border-yellow-300" : "bg-gray-100 opacity-50"
                 }`}
               >
-                <span className="text-3xl">{achievement.emoji}</span>
+                <achievement.icon className="w-8 h-8" />
                 <h3 className="font-semibold text-sm">{achievement.title}</h3>
                 <p className="text-xs text-gray-600">{achievement.description}</p>
                 {isUnlocked && unlockedAchievement && (

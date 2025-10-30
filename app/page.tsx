@@ -2,6 +2,8 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { createClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
+import { ThemeToggle } from "@/components/theme-toggle"
+import { BarChart3, TrendingUp, Lightbulb } from "lucide-react"
 
 export default async function Home() {
   const supabase = await createClient()
@@ -14,11 +16,14 @@ export default async function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+    <main className="min-h-screen bg-background flex items-center justify-center p-4 relative">
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
       <div className="max-w-2xl w-full text-center space-y-8">
         <div className="space-y-4">
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-900">Mood Journal Tracker</h1>
-          <p className="text-xl text-gray-600">
+          <h1 className="text-5xl md:text-6xl font-bold text-foreground">Serenote</h1>
+          <p className="text-xl text-muted-foreground">
             Track your daily mood, discover patterns, and improve your emotional well-being
           </p>
         </div>
@@ -37,20 +42,20 @@ export default async function Home() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-          <div className="bg-white rounded-lg p-6 shadow-sm">
-            <div className="text-3xl mb-2">📊</div>
-            <h3 className="font-semibold text-gray-900">Track Daily Moods</h3>
-            <p className="text-sm text-gray-600 mt-2">Log your mood with emojis and notes</p>
+          <div className="bg-card rounded-lg p-6 shadow-sm flex flex-col items-center text-center">
+            <BarChart3 className="h-8 w-8 mb-2" />
+            <h3 className="font-semibold text-card-foreground">Track Daily Moods</h3>
+            <p className="text-sm text-muted-foreground mt-2">Log your mood with emojis and notes</p>
           </div>
-          <div className="bg-white rounded-lg p-6 shadow-sm">
-            <div className="text-3xl mb-2">📈</div>
-            <h3 className="font-semibold text-gray-900">Visualize Trends</h3>
-            <p className="text-sm text-gray-600 mt-2">See patterns in your emotional well-being</p>
+          <div className="bg-card rounded-lg p-6 shadow-sm flex flex-col items-center text-center">
+            <TrendingUp className="h-8 w-8 mb-2" />
+            <h3 className="font-semibold text-card-foreground">Visualize Trends</h3>
+            <p className="text-sm text-muted-foreground mt-2">See patterns in your emotional well-being</p>
           </div>
-          <div className="bg-white rounded-lg p-6 shadow-sm">
-            <div className="text-3xl mb-2">💡</div>
-            <h3 className="font-semibold text-gray-900">Get Insights</h3>
-            <p className="text-sm text-gray-600 mt-2">Receive personalized affirmations and tips</p>
+          <div className="bg-card rounded-lg p-6 shadow-sm flex flex-col items-center text-center">
+            <Lightbulb className="h-8 w-8 mb-2" />
+            <h3 className="font-semibold text-card-foreground">Get Insights</h3>
+            <p className="text-sm text-muted-foreground mt-2">Receive personalized affirmations and tips</p>
           </div>
         </div>
       </div>

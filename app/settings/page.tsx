@@ -3,8 +3,12 @@ import { redirect } from "next/navigation"
 import { RemindersSettings } from "@/components/reminders-settings"
 import { AchievementsDisplay } from "@/components/achievements-display"
 import { ExportData } from "@/components/export-data"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
+import { NotificationReminder } from "@/components/notification-reminder"
+import { ProfileSettings } from "@/components/profile-settings"
+import { Sidebar } from "@/components/sidebar"
+import { MoodHeader } from "@/components/mood-header"
+import { calculateMoodStreak } from "@/lib/utils"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 
 export default async function SettingsPage() {
   const supabase = await createClient()
@@ -17,32 +21,39 @@ export default async function SettingsPage() {
     redirect("/auth/login")
   }
 
-  const [{ data: reminders }, { data: achievements }] = await Promise.all([
+  const [{ data: reminders }, { data: achievements }, { data: profile }, { data: entries }] = await Promise.all([
     supabase.from("reminders").select("*").eq("user_id", user.id),
     supabase.from("achievements").select("*").eq("user_id", user.id),
+    supabase.from("profiles").select("*").eq("id", user.id).single(),
+    supabase.from("mood_entries").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(1),
   ])
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-          <div className="flex gap-2">
-            <Link href="/dashboard">
-              <Button variant="outline">Dashboard</Button>
-            </Link>
-            <Link href="/analytics">
-              <Button variant="outline">Analytics</Button>
-            </Link>
-          </div>
-        </div>
-      </header>
+  const streakCount = calculateMoodStreak(entries || [])
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-        <RemindersSettings reminders={reminders || []} />
-        <AchievementsDisplay achievements={achievements || []} />
-        <ExportData />
-      </main>
+  return (
+    <div className="flex min-h-screen bg-background animate-fade-in">
+      <Sidebar currentPage="/settings" />
+      <div className="flex-1 flex flex-col">
+        <MoodHeader latestMood={entries?.[0]} streakCount={streakCount} profile={profile} />
+        <main className="flex-1 px-4 sm:px-6 lg:px-8 py-8">
+          <Tabs defaultValue="profile" className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="profile">Profile</TabsTrigger>
+              <TabsTrigger value="reminders">Daily Reminders</TabsTrigger>
+              <TabsTrigger value="notifications">Browser Notifications</TabsTrigger>
+            </TabsList>
+            <TabsContent value="profile" className="space-y-6 mt-6">
+              <ProfileSettings profile={profile} />
+            </TabsContent>
+            <TabsContent value="reminders" className="space-y-6 mt-6">
+              <RemindersSettings reminders={reminders || []} />
+            </TabsContent>
+            <TabsContent value="notifications" className="space-y-6 mt-6">
+              <NotificationReminder reminders={reminders || []} />
+            </TabsContent>
+          </Tabs>
+        </main>
+      </div>
     </div>
   )
 }

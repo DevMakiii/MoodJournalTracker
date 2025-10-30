@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -39,13 +40,16 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10 bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10 bg-background">
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
       <div className="w-full max-w-sm">
         <div className="flex flex-col gap-6">
           <Card>
             <CardHeader>
-              <CardTitle className="text-2xl">Login</CardTitle>
-              <CardDescription>Enter your email and password to access your mood journal</CardDescription>
+              <CardTitle className="text-2xl text-center">Login</CardTitle>
+              <CardDescription className="text-center">Enter your email and password to access your mood journal</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleLogin}>

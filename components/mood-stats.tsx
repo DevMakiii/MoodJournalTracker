@@ -1,6 +1,7 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { BarChart3, PieChart, Flame, FileText } from "lucide-react"
 
 interface MoodEntry {
   id: string
@@ -78,7 +79,10 @@ export function MoodStats({ entries }: MoodStatsProps) {
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-gray-600">Average Mood</CardTitle>
+          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+            <BarChart3 className="h-4 w-4" />
+            Average Mood
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{stats.averageMood}</div>
@@ -88,7 +92,10 @@ export function MoodStats({ entries }: MoodStatsProps) {
 
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-gray-600">Most Common</CardTitle>
+          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+            <PieChart className="h-4 w-4" />
+            Most Common
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{stats.mostCommon ? moodLabels[stats.mostCommon] : "N/A"}</div>
@@ -98,7 +105,10 @@ export function MoodStats({ entries }: MoodStatsProps) {
 
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-gray-600">Current Streak</CardTitle>
+          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+            <Flame className="h-4 w-4" />
+            Current Streak
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{stats.currentStreak}</div>
@@ -108,7 +118,10 @@ export function MoodStats({ entries }: MoodStatsProps) {
 
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-gray-600">Total Entries</CardTitle>
+          <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+            <FileText className="h-4 w-4" />
+            Total Entries
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{stats.totalEntries}</div>

@@ -10,8 +10,11 @@ import { Label } from "@/components/ui/label"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 export default function SignUpPage() {
+  const [firstName, setFirstName] = useState("")
+  const [lastName, setLastName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [repeatPassword, setRepeatPassword] = useState("")
@@ -33,20 +36,92 @@ export default function SignUpPage() {
 
     try {
       console.log("Attempting sign up with email:", email)
-      console.log("Redirect URL:", process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL || `${window.location.origin}/dashboard`)
+      console.log("Redirect URL:", `${window.location.origin}/dashboard`)
+      const userMetadata = {
+        first_name: firstName,
+        last_name: lastName,
+        display_name: `${firstName} ${lastName}`.trim(),
+      }
+      console.log("User metadata being sent:", userMetadata)
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL || `${window.location.origin}/dashboard`,
+          data: userMetadata,
+          emailRedirectTo: `${window.location.origin}/dashboard`,
         },
       })
       console.log("Sign up response data:", data)
       console.log("Sign up response error:", error)
       if (error) throw error
+
+      // Create profile after successful signup
+      if (data.user) {
+        console.log("Creating user profile...")
+        console.log("User ID:", data.user.id)
+        console.log("Profile data to insert:", {
+          id: data.user.id,
+          first_name: firstName,
+          last_name: lastName,
+          display_name: `${firstName} ${lastName}`.trim(),
+        })
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert({
+            id: data.user.id,
+            first_name: firstName,
+            last_name: lastName,
+            display_name: `${firstName} ${lastName}`.trim(),
+          })
+
+        if (profileError) {
+          console.error("Profile creation error:", profileError)
+          console.error("Profile error details:", {
+            message: profileError.message,
+            details: profileError.details,
+            hint: profileError.hint,
+            code: profileError.code,
+          })
+          // Don't throw here - user is created, just log the profile error
+        } else {
+          console.log("Profile created successfully")
+        }
+      }
+
       router.push("/auth/sign-up-success")
     } catch (error: unknown) {
       console.error("Sign up error:", error)
+      console.error("Full error object:", error)
+      if (error && typeof error === 'object' && 'status' in error) {
+        console.error("Error status:", (error as any).status)
+      }
+      if (error && typeof error === 'object' && 'code' in error) {
+        console.error("Error code:", (error as any).code)
+      }
+      // Additional logging for trigger function issues
+      console.error("Checking if trigger function is causing issues...")
+      console.error("First name:", firstName, "Last name:", lastName)
+
+      // Check if profile insertion failed - data might be undefined if signup failed
+      console.error("Checking if user was created despite error...")
+      try {
+        const { data: userData, error: userCheckError } = await supabase.auth.getUser()
+        if (userData?.user) {
+          console.error("User exists:", userData.user.id)
+          console.error("Attempting to check if profile exists...")
+          const { data: profileData, error: profileCheckError } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', userData.user.id)
+            .single()
+          console.error("Profile check result:", profileData, "Error:", profileCheckError)
+        } else {
+          console.error("No user found after error:", userCheckError)
+        }
+      } catch (checkError) {
+        console.error("Error during user/profile check:", checkError)
+      }
+
       setError(error instanceof Error ? error.message : "An error occurred")
     } finally {
       setIsLoading(false)
@@ -54,17 +129,42 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10 bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10 bg-background">
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
       <div className="w-full max-w-sm">
         <div className="flex flex-col gap-6">
           <Card>
             <CardHeader>
-              <CardTitle className="text-2xl">Sign up</CardTitle>
-              <CardDescription>Create your mood journal account</CardDescription>
+              <CardTitle className="text-2xl text-center">Sign up</CardTitle>
+              <CardDescription className="text-center">Create your mood journal account</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSignUp}>
                 <div className="flex flex-col gap-6">
+                  <div className="grid gap-2">
+                    <Label htmlFor="first-name">First Name</Label>
+                    <Input
+                      id="first-name"
+                      type="text"
+                      placeholder="John"
+                      required
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="last-name">Last Name</Label>
+                    <Input
+                      id="last-name"
+                      type="text"
+                      placeholder="Doe"
+                      required
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                    />
+                  </div>
                   <div className="grid gap-2">
                     <Label htmlFor="email">Email</Label>
                     <Input

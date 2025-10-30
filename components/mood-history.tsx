@@ -3,8 +3,10 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { createClient } from "@/lib/supabase/client"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
+import { Sprout, Trash2 } from "lucide-react"
 
 interface MoodEntry {
   id: string
@@ -40,26 +42,56 @@ export function MoodHistory({ entries }: MoodHistoryProps) {
 
   const sortedEntries = [...entries].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
 
+  const inspirationalQuotes = [
+    "Every storm runs out of rain.",
+    "You are stronger than you know.",
+    "This too shall pass.",
+    "Small steps lead to big changes.",
+    "Your feelings are valid.",
+  ]
+
+  const [randomQuote, setRandomQuote] = useState<string>("")
+
+  useEffect(() => {
+    // Use a seeded random based on current date to ensure server/client consistency
+    const today = new Date().toDateString()
+    let hash = 0
+    for (let i = 0; i < today.length; i++) {
+      const char = today.charCodeAt(i)
+      hash = ((hash << 5) - hash) + char
+      hash = hash & hash // Convert to 32bit integer
+    }
+    const seed = Math.abs(hash) % inspirationalQuotes.length
+    setRandomQuote(inspirationalQuotes[seed])
+  }, [])
+
   return (
-    <Card>
+    <Card className="animate-fade-in">
       <CardHeader>
-        <CardTitle>Recent Mood Entries</CardTitle>
-        <CardDescription>Your mood history</CardDescription>
+        <CardTitle className="text-center font-light">Recent Mood Entries</CardTitle>
+        <CardDescription className="text-center">Your journey of self-reflection</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
           {sortedEntries.length === 0 ? (
-            <p className="text-sm text-gray-500 text-center py-8">No mood entries yet. Start tracking your mood!</p>
+            <div className="text-center py-12 space-y-4">
+              <Sprout className="w-16 h-16 opacity-50 animate-gentle-bounce mx-auto" />
+              <p className="text-sm text-muted-foreground">No mood entries yet. Start your journey of self-discovery!</p>
+              <p className="text-xs text-muted-foreground italic">
+                "{randomQuote}"
+              </p>
+            </div>
           ) : (
-            sortedEntries.map((entry) => (
+            sortedEntries.slice(0, 3).map((entry, index) => (
               <div
                 key={entry.id}
-                className="flex items-start justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                className="flex items-start justify-between p-4 bg-accent/30 rounded-xl hover:bg-accent/50 transition-all duration-300 animate-slide-up border border-accent/20"
+                style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <div className="flex gap-4 flex-1">
-                  <span className="text-3xl">{entry.mood_emoji}</span>
+                  <span className="text-3xl animate-fade-in">{entry.mood_emoji}</span>
                   <div className="flex-1">
-                    <p className="font-medium text-gray-900">
+                    <p className="font-light text-foreground">
                       {new Date(entry.created_at).toLocaleDateString("en-US", {
                         weekday: "short",
                         month: "short",
@@ -68,18 +100,42 @@ export function MoodHistory({ entries }: MoodHistoryProps) {
                         minute: "2-digit",
                       })}
                     </p>
-                    {entry.notes && <p className="text-sm text-gray-600 mt-1">{entry.notes}</p>}
+                    {entry.notes && <p className="text-sm text-muted-foreground mt-1 leading-relaxed">{entry.notes}</p>}
                   </div>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleDelete(entry.id)}
-                  disabled={deletingId === entry.id}
-                  className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                >
-                  {deletingId === entry.id ? "Deleting..." : "Delete"}
-                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      disabled={deletingId === entry.id}
+                      className="text-destructive hover:text-destructive hover:bg-destructive/10 transition-all duration-300"
+                    >
+                      {deletingId === entry.id ? (
+                        <div className="w-4 h-4 border-2 border-destructive/30 border-t-destructive rounded-full animate-spin" />
+                      ) : (
+                        <Trash2 className="w-4 h-4" />
+                      )}
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Delete Mood Entry</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Are you sure you want to delete this mood entry? This action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => handleDelete(entry.id)}
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      >
+                        Delete
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             ))
           )}

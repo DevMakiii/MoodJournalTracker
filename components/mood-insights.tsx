@@ -1,6 +1,7 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { FileText, Star, Scale, CheckCircle, Sparkles } from "lucide-react"
 
 interface MoodEntry {
   id: string
@@ -21,7 +22,7 @@ export function MoodInsights({ entries }: MoodInsightsProps) {
         {
           title: "Get Started",
           description: "Start tracking your mood to see personalized insights and patterns.",
-          emoji: "📝",
+          icon: FileText,
         },
       ]
     }
@@ -35,19 +36,19 @@ export function MoodInsights({ entries }: MoodInsightsProps) {
       insights.push({
         title: "You're doing great!",
         description: "Your average mood is above 4. Keep up the positive momentum!",
-        emoji: "🌟",
+        icon: Star,
       })
     } else if (averageMood >= 3) {
       insights.push({
         title: "Steady state",
         description: "Your mood is stable. Consider activities that bring you joy.",
-        emoji: "⚖️",
+        icon: Scale,
       })
     } else {
       insights.push({
         title: "Challenging times",
         description: "Your mood has been lower recently. Consider self-care activities.",
-        emoji: "🤗",
+        icon: Sparkles,
       })
     }
 
@@ -72,7 +73,7 @@ export function MoodInsights({ entries }: MoodInsightsProps) {
       insights.push({
         title: `Your typical mood is ${moodLabels[mostCommon]}`,
         description: `You've felt this way ${moodCounts[Number.parseInt(mostCommon)]} times in your tracked entries.`,
-        emoji: "📊",
+        icon: Scale,
       })
     }
 
@@ -88,7 +89,7 @@ export function MoodInsights({ entries }: MoodInsightsProps) {
       insights.push({
         title: "Great consistency!",
         description: `You've logged ${last7Days.length} entries in the last 7 days. Keep tracking!`,
-        emoji: "✅",
+        icon: CheckCircle,
       })
     }
 
@@ -103,7 +104,7 @@ export function MoodInsights({ entries }: MoodInsightsProps) {
     insights.push({
       title: "Daily Affirmation",
       description: affirmations[Math.floor(Math.random() * affirmations.length)],
-      emoji: "💫",
+      icon: Sparkles,
     })
 
     return insights
@@ -115,19 +116,22 @@ export function MoodInsights({ entries }: MoodInsightsProps) {
     <div className="space-y-4">
       <h2 className="text-xl font-bold text-gray-900">Insights & Tips</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {insights.map((insight, index) => (
-          <Card key={index}>
-            <CardHeader className="pb-3">
-              <div className="flex items-start gap-3">
-                <span className="text-2xl">{insight.emoji}</span>
-                <CardTitle className="text-base">{insight.title}</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-gray-600">{insight.description}</p>
-            </CardContent>
-          </Card>
-        ))}
+        {insights.map((insight, index) => {
+          const IconComponent = insight.icon || FileText
+          return (
+            <Card key={index}>
+              <CardHeader className="pb-3">
+                <div className="flex items-start gap-3">
+                  <IconComponent className="w-6 h-6" />
+                  <CardTitle className="text-base">{insight.title}</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-gray-600">{insight.description}</p>
+              </CardContent>
+            </Card>
+          )
+        })}
       </div>
     </div>
   )

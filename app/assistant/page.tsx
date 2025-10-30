@@ -1,8 +1,9 @@
 import { createClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
 import { AIAssistant } from "@/components/ai-assistant"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
+import { Sidebar } from "@/components/sidebar"
+import { MoodHeader } from "@/components/mood-header"
+import { calculateMoodStreak } from "@/lib/utils"
 
 export default async function AssistantPage() {
   const supabase = await createClient()
@@ -28,28 +29,23 @@ export default async function AssistantPage() {
     ? `Your latest mood was ${latestEntry.mood_emoji} (${latestEntry.mood_level}/5)${latestEntry.notes ? ` with notes: ${latestEntry.notes}` : ""}`
     : undefined
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-gray-900">Journal Assistant</h1>
-          <div className="flex gap-2">
-            <Link href="/dashboard">
-              <Button variant="outline">Dashboard</Button>
-            </Link>
-            <Link href="/analytics">
-              <Button variant="outline">Analytics</Button>
-            </Link>
-            <Link href="/settings">
-              <Button variant="outline">Settings</Button>
-            </Link>
-          </div>
-        </div>
-      </header>
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .single()
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <AIAssistant userMoodContext={moodContext} />
-      </main>
+  const streakCount = calculateMoodStreak([latestEntry].filter(Boolean))
+
+  return (
+    <div className="flex min-h-screen bg-background animate-fade-in">
+      <Sidebar currentPage="/assistant" />
+      <div className="flex-1 flex flex-col">
+        <MoodHeader latestMood={latestEntry} streakCount={streakCount} profile={profile} />
+        <main className="flex-1 px-4 sm:px-6 lg:px-8 py-4">
+          <AIAssistant userMoodContext={moodContext} />
+        </main>
+      </div>
     </div>
   )
 }

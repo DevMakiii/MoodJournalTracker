@@ -7,6 +7,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useRouter } from "next/navigation"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
+import { Trash2 } from "lucide-react"
 
 interface Reminder {
   id: string
@@ -103,11 +105,11 @@ export function RemindersSettings({ reminders }: RemindersSettingsProps) {
         <div className="space-y-2">
           <h3 className="font-medium">Your reminders</h3>
           {remindersList.length === 0 ? (
-            <p className="text-sm text-gray-500">No reminders set yet</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">No reminders set yet</p>
           ) : (
             <div className="space-y-2">
               {remindersList.map((reminder) => (
-                <div key={reminder.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div key={reminder.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
                   <div className="flex items-center gap-3">
                     <input
                       type="checkbox"
@@ -117,14 +119,34 @@ export function RemindersSettings({ reminders }: RemindersSettingsProps) {
                     />
                     <span className="text-sm font-medium">{reminder.time}</span>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleDeleteReminder(reminder.id)}
-                    className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                  >
-                    Delete
-                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Reminder</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Are you sure you want to delete this reminder? This action cannot be undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => handleDeleteReminder(reminder.id)}
+                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        >
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               ))}
             </div>

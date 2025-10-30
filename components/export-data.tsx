@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Download } from "lucide-react"
 
 export function ExportData() {
   const handleExport = async (format: "json" | "csv") => {
@@ -35,9 +36,11 @@ export function ExportData() {
         </p>
         <div className="flex gap-2">
           <Button onClick={() => handleExport("json")} variant="outline" className="flex-1">
+            <Download className="w-4 h-4 mr-2" />
             Export as JSON
           </Button>
           <Button onClick={() => handleExport("csv")} variant="outline" className="flex-1">
+            <Download className="w-4 h-4 mr-2" />
             Export as CSV
           </Button>
         </div>
