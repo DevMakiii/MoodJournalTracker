@@ -5,7 +5,6 @@ import { redirect } from "next/navigation"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { BarChart3, TrendingUp, Lightbulb } from "lucide-react"
 
-  console.log('Home page rendering, checking Tailwind classes');
 export default async function Home() {
   const supabase = await createClient()
   const {
@@ -23,7 +22,7 @@ export default async function Home() {
       </div>
       <div className="max-w-2xl w-full text-center space-y-8">
         <div className="space-y-4">
-          <h1 className="text-5xl md:text-6xl font-bold text-foreground test-css">Serenote</h1>
+          <h1 className="text-5xl md:text-6xl font-bold text-foreground">Serenote</h1>
           <p className="text-xl text-muted-foreground">
             Track your daily mood, discover patterns, and improve your emotional well-being
           </p>
