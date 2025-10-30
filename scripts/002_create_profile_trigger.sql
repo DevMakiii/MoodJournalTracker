@@ -1,2 +1,0 @@
--- Trigger removed - profile creation now handled in client code after signup
--- This avoids permission issues with accessing auth.users table
