@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { useToast } from "@/hooks/use-toast"
-import { Upload } from "lucide-react"
+import { Upload, Trash2 } from "lucide-react"
 
 interface Profile {
   id: string
@@ -29,6 +30,7 @@ export function ProfileSettings({ profile }: ProfileSettingsProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(profile?.avatar_url || null)
   const [isLoading, setIsLoading] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
   const { toast } = useToast()
   const supabase = createClient()
 
@@ -159,6 +161,38 @@ export function ProfileSettings({ profile }: ProfileSettingsProps) {
     }
   }
 
+  const handleDeleteAccount = async () => {
+    setIsDeleting(true)
+    try {
+      const response = await fetch('/api/delete-account', {
+        method: 'DELETE',
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to delete account')
+      }
+
+      toast({
+        title: "Account data deleted",
+        description: "Your account data has been successfully deleted. You will now be logged out.",
+      })
+
+      // Sign out the user and redirect
+      await supabase.auth.signOut()
+      window.location.href = '/'
+    } catch (error) {
+      console.error("Error deleting account:", error)
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to delete account. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsDeleting(false)
+    }
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -233,6 +267,39 @@ export function ProfileSettings({ profile }: ProfileSettingsProps) {
             {isLoading ? "Updating..." : "Update Profile"}
           </Button>
         </form>
+        <div className="mt-6 pt-6 border-t">
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-lg font-medium text-destructive">Danger Zone</h3>
+              <p className="text-sm text-muted-foreground">
+                Once you delete your account, there is no going back. Please be certain.
+              </p>
+            </div>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive" disabled={isDeleting}>
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  {isDeleting ? "Deleting..." : "Delete Account"}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete your account
+                    and remove all your data from our servers.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleDeleteAccount} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                    Delete Account
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        </div>
       </CardContent>
     </Card>
   )
