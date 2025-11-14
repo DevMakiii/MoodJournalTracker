@@ -25,6 +25,9 @@ export async function updateSession(request: NextRequest) {
     },
   )
 
+  // Handle auth callbacks by refreshing the session
+  await supabase.auth.getSession()
+
   const {
     data: { user },
   } = await supabase.auth.getUser()

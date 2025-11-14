@@ -162,24 +162,33 @@ export function ProfileSettings({ profile }: ProfileSettingsProps) {
   }
 
   const handleDeleteAccount = async () => {
+    console.log('Starting account deletion from frontend')
     setIsDeleting(true)
     try {
+      console.log('Sending DELETE request to /api/delete-account')
       const response = await fetch('/api/delete-account', {
         method: 'DELETE',
       })
+      console.log('API response status:', response.status)
 
       if (!response.ok) {
         const errorData = await response.json()
+        console.error('API returned error:', errorData)
         throw new Error(errorData.error || 'Failed to delete account')
       }
 
+      const successData = await response.json()
+      console.log('API returned success:', successData)
+
       toast({
-        title: "Account data deleted",
-        description: "Your account data has been successfully deleted. You will now be logged out.",
+        title: "Account deleted",
+        description: "Your account and all associated data have been permanently deleted. You will now be logged out.",
       })
 
       // Sign out the user and redirect
+      console.log('Signing out user')
       await supabase.auth.signOut()
+      console.log('Redirecting to home page')
       window.location.href = '/'
     } catch (error) {
       console.error("Error deleting account:", error)

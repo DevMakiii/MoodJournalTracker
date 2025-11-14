@@ -55,38 +55,6 @@ export default function SignUpPage() {
       console.log("Sign up response error:", error)
       if (error) throw error
 
-      // Create profile after successful signup
-      if (data.user) {
-        console.log("Creating user profile...")
-        console.log("User ID:", data.user.id)
-        console.log("Profile data to insert:", {
-          id: data.user.id,
-          first_name: firstName,
-          last_name: lastName,
-          display_name: `${firstName} ${lastName}`.trim(),
-        })
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert({
-            id: data.user.id,
-            first_name: firstName,
-            last_name: lastName,
-            display_name: `${firstName} ${lastName}`.trim(),
-          })
-
-        if (profileError) {
-          console.error("Profile creation error:", profileError)
-          console.error("Profile error details:", {
-            message: profileError.message,
-            details: profileError.details,
-            hint: profileError.hint,
-            code: profileError.code,
-          })
-          // Don't throw here - user is created, just log the profile error
-        } else {
-          console.log("Profile created successfully")
-        }
-      }
 
       router.push("/auth/sign-up-success")
     } catch (error: unknown) {

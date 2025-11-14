@@ -37,11 +37,38 @@ export default async function DashboardPage() {
     console.error("Error details:", JSON.stringify(entriesError, null, 2))
   }
 
-  const { data: profile } = await supabase
+  let { data: profile } = await supabase
     .from("profiles")
     .select("*")
     .eq("id", user.id)
     .single()
+
+  // Create profile if it doesn't exist
+  if (!profile) {
+    const firstName = user.user_metadata?.first_name
+    const lastName = user.user_metadata?.last_name
+    if (firstName && lastName) {
+      const { error } = await supabase
+        .from('profiles')
+        .insert({
+          id: user.id,
+          first_name: firstName,
+          last_name: lastName,
+          display_name: `${firstName} ${lastName}`.trim(),
+        })
+      if (error) {
+        console.error('Error creating profile in dashboard:', error)
+      } else {
+        // Refetch profile
+        const { data: newProfile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single()
+        profile = newProfile
+      }
+    }
+  }
 
   const streakCount = calculateMoodStreak(entries || [])
 
